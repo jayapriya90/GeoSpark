@@ -26,14 +26,14 @@ This will create a GeoSpark-0.1.jar file in the target folder.
 
 ### Running Computational Geometry on GeoSpark
 #### Launch Spark command line using
-1. Launching locally: ./spark-shell --jars <path to GeoSpark-0.1.jar>,<path to guava-18.0.jar>,<path to jts-1.13.jar>
-2. Launching on a cluster: ./spark-shell --jars <path to GeoSpark-0.1.jar>,<path to guava-18.0.jar>,<path to jts-1.13.jar> --master <name of the master>
+1. Launching locally: ./spark-shell --jars "path to GeoSpark-0.1.jar","path to guava-18.0.jar","path to jts-1.13.jar"
+2. Launching on a cluster: ./spark-shell --jars "path to GeoSpark-0.1.jar","path to guava-18.0.jar","path to jts-1.13.jar" --master "name of the master"
 
 #### Import spatialRDD
 import org.datasyslab.geospark.spatialRDD._
 
 ####Declare points RDD using the datafile
-val points = new PointRDD(sc, "<Path to points.csv>", 0, ",", number of partitions)
+val points = new PointRDD(sc, "Path to points.csv", 0, ",", number of partitions)
 
 #### Closest Pair
 points.closestPair
