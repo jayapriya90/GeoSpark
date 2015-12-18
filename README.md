@@ -25,16 +25,22 @@ This will create a GeoSpark-0.1.jar file in the target folder.
 3. You can now use GeoSpark spatial RDDs in your Apache Spark program to store spatial data and call needed functions!
 
 ### Running Computational Geometry on GeoSpark
-# Launch Spark command line using
-1. Launching locally
-2. cd GeoSpark
-# Closest Pair
-1. git clone https://github.com/jayapriya90/GeoSpark.git
-2. cd GeoSpark
-3. mvn compile
-4. mvn package
+#### Launch Spark command line using
+1. Launching locally: ./spark-shell --jars <path to GeoSpark-0.1.jar>,<path to guava-18.0.jar>,<path to jts-1.13.jar>
+2. Launching on a cluster: ./spark-shell --jars <path to GeoSpark-0.1.jar>,<path to guava-18.0.jar>,<path to jts-1.13.jar> --master <name of the master>
 
-# Skyline
+#### import spatialRDD
+import org.datasyslab.geospark.spatialRDD._
 
-# Convex Hull
+####declare points RDD
+val points = new PointRDD(sc, "<Path to points.csv>", 0, ",", number of partitions)
+
+#### Closest Pair
+points.closestPair()
+
+#### Skyline
+points.skyline()
+
+#### Convex Hull
+points.convexhull()
 
