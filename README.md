@@ -1,5 +1,9 @@
+##### Computational Geometry Algorithms on GeoSpark
 
-## How to get started (For Scala and Java developers)
+### Dataset
+Under the data folder, you can find sample data file, points.csv of size 98 MB and number of points 4920533
+
+### 
 
 ### Prerequisites
 1. Apache Hadoop 2.4.0 and later
@@ -7,10 +11,10 @@
 3. JDK 1.7
 
 ### Compilation Steps
-git clone https://github.com/jayapriya90/GeoSpark.git
-1. cd GeoSpark
-2. mvn compile
-3. mvn package
+1. git clone https://github.com/jayapriya90/GeoSpark.git
+2. cd GeoSpark
+3. mvn compile
+4. mvn package
 
 This will create a GeoSpark-0.1.jar file in the target folder.
 
@@ -18,4 +22,16 @@ This will create a GeoSpark-0.1.jar file in the target folder.
 1. Create your own Apache Spark project
 2. Add GeoSpark.jar into your Apache Spark build environment
 3. You can now use GeoSpark spatial RDDs in your Apache Spark program to store spatial data and call needed functions!
+
+### Running Computational Geometry on GeoSpark
+# Launch Spark command line using
+1. Launching locally
+2. cd GeoSpark
+# Closest Pair
+1. git clone https://github.com/jayapriya90/GeoSpark.git
+2. cd GeoSpark
+3. mvn compile
+4. mvn package
+
+# Skyline
 
