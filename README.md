@@ -29,18 +29,18 @@ This will create a GeoSpark-0.1.jar file in the target folder.
 1. Launching locally: ./spark-shell --jars <path to GeoSpark-0.1.jar>,<path to guava-18.0.jar>,<path to jts-1.13.jar>
 2. Launching on a cluster: ./spark-shell --jars <path to GeoSpark-0.1.jar>,<path to guava-18.0.jar>,<path to jts-1.13.jar> --master <name of the master>
 
-#### import spatialRDD
+#### Import spatialRDD
 import org.datasyslab.geospark.spatialRDD._
 
-####declare points RDD
+####Declare points RDD using the datafile
 val points = new PointRDD(sc, "<Path to points.csv>", 0, ",", number of partitions)
 
 #### Closest Pair
-points.closestPair()
+points.closestPair
 
 #### Skyline
-points.skyline()
+ points.skyline
 
 #### Convex Hull
-points.convexhull()
+points.convexHull
 
