@@ -1,9 +1,10 @@
-##### Computational Geometry Algorithms on GeoSpark
+# Computational Geometry on GeoSpark
 
 ### Dataset
 Under the data folder, you can find sample data file, points.csv of size 98 MB and number of points 4920533
 
-### 
+### Jars
+Two external jars are required to run GeoSpark code. We have added them to the jars/ folder.
 
 ### Prerequisites
 1. Apache Hadoop 2.4.0 and later
@@ -20,7 +21,7 @@ This will create a GeoSpark-0.1.jar file in the target folder.
 
 ### Steps to deploy
 1. Create your own Apache Spark project
-2. Add GeoSpark.jar into your Apache Spark build environment
+2. Add GeoSpark jar and other jars from the jars/ into your Apache Spark build environment
 3. You can now use GeoSpark spatial RDDs in your Apache Spark program to store spatial data and call needed functions!
 
 ### Running Computational Geometry on GeoSpark
@@ -34,4 +35,6 @@ This will create a GeoSpark-0.1.jar file in the target folder.
 4. mvn package
 
 # Skyline
+
+# Convex Hull
 
