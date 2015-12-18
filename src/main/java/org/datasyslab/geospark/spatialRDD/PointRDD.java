@@ -24,6 +24,7 @@ import org.datasyslab.geospark.gemotryObjects.Rectangle;
 import org.datasyslab.geospark.utils.GeometryComparatorFactory;
 import org.datasyslab.geospark.utils.PointXComparator;
 import org.datasyslab.geospark.utils.PointYComparator;
+import org.datasyslab.geospark.partition.PartitionAssignGridPoint;
 
 import com.clearspring.analytics.util.Lists;
 import com.google.common.collect.Iterables;
@@ -75,6 +76,8 @@ public class PointRDD implements Serializable {
   private static final int DEFAULT_NUM_PARTITIONS = 100;
   private static final int DEFAULT_LEAF_SIZE = 100;
   private static final int MAX_BOUND_RECTANGLE = 1000000;
+  private static final int DEFAULT_GRID_NUMBER_HORIZONTAL = 10;
+  private static final int DEFAULT_GRID_NUMBER_VERTICAL = 10;
 
   /**
    * The point rdd.
@@ -452,43 +455,40 @@ public class PointRDD implements Serializable {
 
   /****************************** CLOSEST PAIR ***********************************/
   public Point[] closestPair() {
-    return closestPair(DEFAULT_NUM_PARTITIONS, false);
+    return closestPair(DEFAULT_GRID_NUMBER_HORIZONTAL, DEFAULT_GRID_NUMBER_VERTICAL, false);
   }
 
-  public Point[] closestPair(int numPartitions) {
-    return closestPair(numPartitions, false);
+  public Point[] closestPair(int GridNumberHorizontal, int GridNumberVertical) {
+    return closestPair(GridNumberHorizontal, GridNumberVertical, false);
   }
 
   public Point[] closestPair(boolean debug) {
-    return closestPair(DEFAULT_NUM_PARTITIONS, debug);
+    return closestPair(DEFAULT_GRID_NUMBER_HORIZONTAL, DEFAULT_GRID_NUMBER_VERTICAL, debug);
   }
 
-  public Point[] closestPair(int numPartitions, boolean debug) {
+  public Point[] closestPair(int GridNumberHorizontal, int GridNumberVertical, boolean debug) {
     long start = System.currentTimeMillis();
     if (debug) {
       System.out.println("Mapping points");
     }
 
-    final int dividerValueX =
-        (int) ((MAX_BOUND_RECTANGLE - 0) / numPartitions);
+    int numPartitions = GridNumberHorizontal*GridNumberVertical;
+    final Envelope boundary = this.boundary();
+    final Double[] gridHorizontalBorder = new Double[GridNumberHorizontal + 1];
+    final Double[] gridVerticalBorder = new Double[GridNumberVertical + 1];
+    final double LongitudeIncrement = (boundary.getMaxX() - boundary.getMinX()) / GridNumberHorizontal;
+    final double LatitudeIncrement = (boundary.getMaxY() - boundary.getMinY()) / GridNumberVertical;
+    for (int i = 0; i < GridNumberHorizontal + 1; i++) {
+        gridHorizontalBorder[i] = boundary.getMinX() + LongitudeIncrement * i;
+    }
+    for (int i = 0; i < GridNumberVertical + 1; i++) {
+       gridVerticalBorder[i] = boundary.getMinY() + LatitudeIncrement * i;
+    }
 
-    final int dividerValueY =
-        (int) ((MAX_BOUND_RECTANGLE - 0) / numPartitions);
+    JavaPairRDD<Integer, Point> keyToPointsData =
+        this.pointRDD.mapPartitionsToPair(new PartitionAssignGridPoint(GridNumberHorizontal,
+                                          GridNumberVertical, gridHorizontalBorder, gridVerticalBorder));
 
-    JavaPairRDD<Rectangle, Point> keyToPointsData =
-        this.pointRDD.mapToPair(new PairFunction<Point, Rectangle, Point>() {
-
-          private static final long serialVersionUID = -433072613673987883L;
-
-          public Tuple2<Rectangle, Point> call(Point p) throws Exception {
-            int l = ((int) p.getX() / dividerValueX) * dividerValueX;
-            int r = l + dividerValueX;
-            int b = ((int) p.getY() / dividerValueY) * dividerValueY;
-            int t = b + dividerValueY;
-            Rectangle rectangle = new Rectangle(l, r, b, t);
-            return new Tuple2<Rectangle, Point>(rectangle, p);
-          }
-        });
     if (debug) {
       System.out.println("DONE Mapping points no=" + keyToPointsData.count()
           + " in " + (System.currentTimeMillis() - start));
@@ -498,7 +498,7 @@ public class PointRDD implements Serializable {
     if (debug) {
       System.out.println("Creating partitions from mapped points");
     }
-    JavaPairRDD<Rectangle, Iterable<Point>> partitionedPointsRDD =
+    JavaPairRDD<Integer, Iterable<Point>> partitionedPointsRDD =
         keyToPointsData.groupByKey(numPartitions);
     if (debug) {
       System.out.println("DONE Creating partitions from mapped points: "
@@ -542,10 +542,10 @@ public class PointRDD implements Serializable {
                       || p.equals(closestPair.second)) {
                     continue;
                   }
-                  int l = ((int) p.getX() / dividerValueX) * dividerValueX;
-                  int r = l + dividerValueX;
-                  int b = ((int) p.getY() / dividerValueY) * dividerValueY;
-                  int t = b + dividerValueY;
+                  double l = ((int) (p.getX() - boundary.getMinX()) / LongitudeIncrement) * LongitudeIncrement;
+                  double r = l + LongitudeIncrement;
+                  double b = ((int) (p.getY() - boundary.getMinY()) / LatitudeIncrement) * LatitudeIncrement;
+                  double t = b + LatitudeIncrement;
                   double distance = closestPair.distance;
                   if (p.getX() - l <= distance || r - p.getX() <= distance) {
                     candidates.add(p);
