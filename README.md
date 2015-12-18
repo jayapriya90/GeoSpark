@@ -8,9 +8,9 @@
 
 ### Compilation Steps
 git clone https://github.com/jayapriya90/GeoSpark.git
-cd GeoSpark
-mvn compile
-mvn package
+1. cd GeoSpark
+2. mvn compile
+3. mvn package
 
 This will create a GeoSpark-0.1.jar file in the target folder.
 
